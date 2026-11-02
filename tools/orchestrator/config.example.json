@@ -1,0 +1,14 @@
+{
+  "model": { "id": "REPLACE_WITH_MODEL_ID_FROM_MODELS_COMMAND" },
+  "taskFile": "docs/agent-task.md",
+  "skills": ["tdd", "diagnosing-bugs", "code-review"],
+  "maxFixes": 2,
+  "timeoutMs": 1200000,
+  "milestones": [
+    {
+      "id": "A1",
+      "title": "Deliver the task contract's first small feature",
+      "brief": "Implement only the concrete scope, file ownership, and acceptance criteria in docs/agent-task.md. Preserve the existing architecture. Report any acceptance evidence that cannot be produced with the available tools."
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "cursor-ios-orchestrator",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "check": "npm --prefix ../.. run check",
+    "typecheck": "npm --prefix ../.. run typecheck",
+    "test": "npm --prefix ../.. test",
+    "dry-run": "npm --prefix ../.. run orchestrator:dry-run --",
+    "live": "npm --prefix ../.. run orchestrator:live --",
+    "login": "npm --prefix ../.. run login",
+    "models": "npm --prefix ../.. run models",
+    "memory": "npm --prefix ../.. run memory --",
+    "skills": "npm --prefix ../.. run skills --"
+  }
+}
