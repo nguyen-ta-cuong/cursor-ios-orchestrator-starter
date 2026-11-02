@@ -1,0 +1,7 @@
+# XcodeBuildMCP project configuration (schema for xcodebuildmcp 2.3.2).
+# Read from the repository root when Cursor starts the server from .cursor/mcp.json.
+# Session defaults are intentionally absent: the coordinator sets them per session
+# from tools/ios-harness/config.json, so this file stays machine-independent.
+schemaVersion: 1
+enabledWorkflows: ["simulator", "ui-automation", "logging", "debugging"]
+sentryDisabled: true

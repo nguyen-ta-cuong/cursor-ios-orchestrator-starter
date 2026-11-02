@@ -1,0 +1,17 @@
+---
+description: Build, run, test, debug, or inspect the iOS app interactively in the Simulator through XcodeBuildMCP.
+alwaysApply: false
+---
+
+The interactive coordinator builds and runs the app through the XcodeBuildMCP server in `.cursor/mcp.json`, following `.cursor/skills/xcodebuildmcp/SKILL.md`. These bindings apply in this repository:
+
+1. Call `session_show_defaults`. If the project, scheme, or simulator is missing, read `tools/ios-harness/config.json` and call `session_set_defaults` with its `workspace` as `workspacePath` or its `project` as `projectPath` (absolute), `scheme`, and `simulatorUDID` as `simulatorId`. Keep `persist` off so `.xcodebuildmcp/config.yaml` stays machine-independent. If the harness config is missing or still has placeholders, discover with `discover_projs`, `list_schemes`, and `list_sims`, and confirm the choice with the user.
+2. Run the app with `build_run_sim`, then add the bundle ID it reports to the defaults with `session_set_defaults`; with session defaults on, `stop_app_sim`, `launch_app_logs_sim`, and the log tools take `bundleId` only from the defaults. Capture visual evidence with `screenshot` and the view hierarchy with `snapshot_ui`; drive it with `tap`, `swipe`, and `type_text`; read logs with `launch_app_logs_sim` or `start_sim_log_cap` and `stop_sim_log_cap`; debug with the `debug_*` tools.
+3. Run a single test with `test_sim` and `extraArgs: ["-only-testing:<Target>/<Suite>/<test>"]`. `extraArgs` go straight to xcodebuild, so `-test-iterations` and `-run-tests-until-failure` work too.
+4. Acceptance evidence still comes from the serial gate, `npm run harness` (`tools/ios-harness/check.sh`). XcodeBuildMCP runs are for iteration, debugging, and visual checks. Attach screenshots to the review request when the task needs visual acceptance.
+5. Wait while `.orchestrator/build-lock` exists or the SDK runner is active: the gate uses the same simulator.
+6. Only the coordinator uses XcodeBuildMCP. `ios-implementer` and the reviewers do not build or run, and SDK workers have no MCP access.
+
+UI automation (`snapshot_ui`, `tap`, `swipe`, `type_text`, gestures) needs XcodeBuildMCP 2.7.0 or later on Xcode 27. With 2.3.2 those tools fail with a missing `SimulatorKit.framework` error; build, run, test, and `screenshot` still work. Report that limitation, and use screenshots or ask the user to interact instead.
+
+Enabled workflows are listed in `.xcodebuildmcp/config.yaml`. If a needed tool is missing, add its workflow there and reload Cursor. Report the defaults you used and, on failure, the exact failing step.
