@@ -1,0 +1,28 @@
+{
+  "name": "ios-feature-milestones",
+  "description": "Implement the task contract's milestones with an independent gate, lens reviews, and bounded repairs",
+  "vars": { "TASK": "{{root}}/docs/agent-task.md" },
+  "shared": "Source of truth: {{TASK}} and the plan it names. Follow them; deviate only with a stated reason.\n\nHard rules:\n- No Git mutations (no commit, stash, checkout, restore, reset, add, branch, worktree).\n- Never read or print secrets, Keychain items, or environment dumps.\n- Run only unit-test targets; do not run UI tests.\n- Do not weaken lint, tests, the harness, or the acceptance criteria.\n\nRecipes (from {{root}}):\n- Gate: npm run harness (tools/ios-harness/check.sh) after tools/ios-harness/config.json is complete.\n- Focused tests: xcodebuildmcp simulator test --project-path REPLACE_WITH_PROJECT --scheme REPLACE_WITH_SCHEME --simulator-id REPLACE_WITH_SIMULATOR_UDID --extra-args=\"-only-testing:REPLACE_WITH_TEST_TARGET/<Suite>/<test>\".\n\nReport honestly: failing gates or tests with output; stop conditions with status \"stopped\".",
+  "lenses": {
+    "invariants": "Lens: CORRECTNESS AND INVARIANTS. State ownership, actor isolation, Sendable boundaries, cancellation and teardown, error paths, regressions, dead or duplicated code, and tests that would fail for the defect they claim to prevent. Read source and the diff; do not build.",
+    "contract": "Lens: CONTRACT. Every acceptance criterion in the task contract is met, nothing unrequested changed behavior, public interfaces and persisted formats stay compatible unless the contract names the change. Quote the contract line for each finding. Do not build.",
+    "rules": "Lens: REPO RULES AND UI. AGENTS.md, nested instructions, .cursor/rules, accessibility labels and identifiers, Dynamic Type, localization, dark appearance, naming, and file length. Do not build."
+  },
+  "gate": {
+    "instructions": "From {{root}}: npm run harness. Then run the writer's focused tests with the Focused tests recipe."
+  },
+  "milestones": [
+    {
+      "id": "A1",
+      "title": "A1 — REPLACE_WITH_FIRST_MILESTONE_TITLE",
+      "detail": "first vertical slice",
+      "lenses": ["contract", "invariants", "rules"],
+      "brief": "Implement only milestone A1 of {{TASK}}: REPLACE_WITH_SCOPE_OWNERSHIP_AND_ACCEPTANCE_CRITERIA."
+    }
+  ],
+  "final": {
+    "tester": "1. Run every gate.\n2. Run the full unit-test bundles and compare with the baseline in the task contract.\n3. Build and run the app with XcodeBuildMCP and capture a screenshot of each changed screen.",
+    "critic": "Compare the delivered work with {{TASK}} item by item. List what is missing, wrong, or half-done, and any rule conflicts."
+  },
+  "agents": { "gate": { "effort": "low" } }
+}
