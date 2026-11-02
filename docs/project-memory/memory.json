@@ -187,26 +187,6 @@
       ]
     },
     {
-      "id": "starter-scope",
-      "topic": "codebase",
-      "summary": "This repository is development tooling for an existing iOS application; it does not contain the application source or establish its domain rules. The Node/TypeScript tools stay out of shipped app targets. Copying the starter into an app requires initializing its own knowledge store and completing task and gate configuration.",
-      "recordedAt": "2026-11-02T09:03:37.593Z",
-      "sources": [
-        {
-          "path": "README.md",
-          "sha256": "cf31ded07c70a407a6bc4c0c8e289ccd033a077604fb0745a5fb64802adfa1c1"
-        },
-        {
-          "path": "docs/agent-task.md",
-          "sha256": "99bb3cd7fb5f354c5ccfa9755a0b8ae8a259c61254bbd0f412135f548adeb276"
-        },
-        {
-          "path": "tsconfig.json",
-          "sha256": "07d2d3fdee601f733d6322890e26f65731a4358848895ac15d83f26e780b3075"
-        }
-      ]
-    },
-    {
       "id": "skill-sources-and-boundaries",
       "topic": "dependencies",
       "summary": "Repository-local Cursor skills include all nine tstack skills, pstack unslop and why with references, Matt Pocock grill-me with its grilling dependency, seven skills distilled from mattpocock/skills at the same pinned commit (tdd, diagnosing-bugs, code-review, to-milestones, domain-modeling, writing-for-agents, handoff), the official XcodeBuildMCP 2.3.2 MCP skill (xcodebuildmcp, byte-identical), and local project-memory and to-workflow. skills-lock.json pins upstream commits and installed hashes; distilled entries record derivedFrom upstream blobs and their adaptations, and npm test fails when installed bytes, modes, file inventories, or dependencies drift from the manifest. Git/PR workflows, full why investigations, conversational grilling, to-milestones, domain-modeling, and handoff need an interactive coordinator; selected skill text never expands SDK worker permissions.",
@@ -231,10 +211,30 @@
       ]
     },
     {
+      "id": "starter-scope",
+      "topic": "codebase",
+      "summary": "This repository is development tooling for an existing iOS application; it does not contain the application source or establish its domain rules. The Node/TypeScript tools stay out of shipped app targets. Copying the starter into an app requires initializing its own knowledge store and completing task and gate configuration.",
+      "recordedAt": "2026-11-02T09:12:55.431Z",
+      "sources": [
+        {
+          "path": "README.md",
+          "sha256": "3d68e68fce314cf8d5e5369b00cf23fae78e6c56fc8203f37d87812a51136e8a"
+        },
+        {
+          "path": "docs/agent-task.md",
+          "sha256": "99bb3cd7fb5f354c5ccfa9755a0b8ae8a259c61254bbd0f412135f548adeb276"
+        },
+        {
+          "path": "tsconfig.json",
+          "sha256": "07d2d3fdee601f733d6322890e26f65731a4358848895ac15d83f26e780b3075"
+        }
+      ]
+    },
+    {
       "id": "xcodebuildmcp-interactive-build-run",
       "topic": "decisions",
       "summary": "The interactive Cursor coordinator builds, runs, tests, debugs, and screenshots the app through XcodeBuildMCP (.cursor/mcp.json, Homebrew xcodebuildmcp mcp); the unattended runner keeps the deterministic xcodebuild gate in tools/ios-harness as acceptance evidence. .xcodebuildmcp/config.yaml enables simulator, ui-automation, logging, and debugging workflows, disables Sentry telemetry (also via env in mcp.json, because the config is only read from the server cwd), and holds no machine-specific defaults: the coordinator sets project, scheme, and simulator per session from tools/ios-harness/config.json with persist off, so interactive runs and the gate target the same app. Interactive runs wait while .orchestrator/build-lock exists because both use the same simulator. Only the coordinator uses XcodeBuildMCP; SDK workers have no MCP access.",
-      "recordedAt": "2026-11-02T09:03:37.601Z",
+      "recordedAt": "2026-11-02T09:12:55.435Z",
       "sources": [
         {
           "path": ".cursor/mcp.json",
@@ -254,7 +254,7 @@
         },
         {
           "path": "README.md",
-          "sha256": "cf31ded07c70a407a6bc4c0c8e289ccd033a077604fb0745a5fb64802adfa1c1"
+          "sha256": "3d68e68fce314cf8d5e5369b00cf23fae78e6c56fc8203f37d87812a51136e8a"
         }
       ]
     },
@@ -262,7 +262,7 @@
       "id": "xcodebuildmcp-version-constraints",
       "topic": "dependencies",
       "summary": "Verified 2026-11-02 with XcodeBuildMCP 2.3.2 and Xcode 27.0 on a throwaway xcodegen SwiftUI app: build_run_sim, screenshot, and test_sim with extraArgs -only-testing succeeded. With 2.3.2 on Xcode 27, every AXe-based UI automation tool (snapshot_ui, tap, swipe, type_text, gestures) fails because bundled AXe 1.5.2 loads SimulatorKit.framework from Developer/Library/PrivateFrameworks, while Xcode 27 ships it in Contents/SharedFrameworks; upstream 2.7.0 added Xcode 27 simulator UI automation. In session-defaults mode, stop_app_sim and log tools expose no parameters, so bundleId must be set with session_set_defaults. test_sim extraArgs are appended to xcodebuild.",
-      "recordedAt": "2026-11-02T09:03:37.606Z",
+      "recordedAt": "2026-11-02T09:12:55.437Z",
       "sources": [
         {
           "path": ".cursor/rules/xcode-build-run.mdc",
@@ -278,7 +278,7 @@
         },
         {
           "path": "README.md",
-          "sha256": "cf31ded07c70a407a6bc4c0c8e289ccd033a077604fb0745a5fb64802adfa1c1"
+          "sha256": "3d68e68fce314cf8d5e5369b00cf23fae78e6c56fc8203f37d87812a51136e8a"
         }
       ]
     }

@@ -18,13 +18,55 @@ brew install xcodebuildmcp    # Simulator build, run, test, and screenshots for 
 
 Then open the folder in Cursor:
 
-1. **Skills, rules, and agents load from the repository.** Check Cursor Settings → Rules for the `.cursor/rules` files, and type `/` in Agent chat to list the skills. Start a new chat or reload the window if they do not appear.
-2. **Enable XcodeBuildMCP.** Cursor reads [.cursor/mcp.json](.cursor/mcp.json); turn on `XcodeBuildMCP` under Settings → MCP. On Xcode 27, `brew upgrade xcodebuildmcp` to 2.7.0 or later before using its UI-automation tools.
+1. **Skills, rules, and subagents load from the repository.** Open **Customize** in the sidebar to see them, or type `/` in Agent chat. Cursor discovers them at startup, so reload the window (⇧⌘P → Developer: Reload Window) if they do not appear.
+2. **Enable XcodeBuildMCP.** Cursor reads [.cursor/mcp.json](.cursor/mcp.json); open **Customize** in the sidebar and turn on the `XcodeBuildMCP` toggle. On Xcode 27, `brew upgrade xcodebuildmcp` to 2.7.0 or later before using its UI-automation tools.
 3. **Point it at your app.** Copy `tools/ios-harness/config.example.json` to `tools/ios-harness/config.json` and fill in the workspace or project, scheme, simulator UUID (`xcrun simctl list devices available`), and unit-test bundles. Complete [docs/agent-task.md](docs/agent-task.md) for the work you want done. To work inside an existing app repository instead, see [Bring the starter into an existing repository](#bring-the-starter-into-an-existing-repository).
-4. **Try it.** In Agent chat: `/grill-me` on a plan, `/to-milestones` to write the task contract, then ask Cursor to follow `.cursor/rules/ios-orchestration.mdc`, or ask it to build and run the app in the Simulator.
+4. **Try it.** Follow [Use it in the Cursor IDE](#use-it-in-the-cursor-ide).
 5. **Optional unattended runner.** `npm run login` signs in to the Cursor SDK, `npm run models` lists model IDs, and `npm run orchestrator:live` runs the configured milestones from a clean Git tree. Copy `tools/orchestrator/config.example.json` to `tools/orchestrator/config.json` first.
 
 Terminal → Run Task offers the same commands from `.vscode/tasks.json`. [VALIDATION.md](VALIDATION.md) records what was checked and what was not. This is a starter for an existing app; no app source is included.
+
+## Use it in the Cursor IDE
+
+Everything below happens in Agent chat (⌘L or ⌘I). Type `/` to pick a skill or subagent; a `/skill` applies to that one message.
+
+### What Cursor loads from this repository
+
+| Piece | Where | How it applies |
+| --- | --- | --- |
+| Instructions | `AGENTS.md` | Every chat |
+| Rules | `.cursor/rules/*.mdc` | `ios-orchestration` and `project-memory` always; `typescript` for `tools/**/*.ts`; `xcode-build-run` when you build, run, or test the app |
+| Skills | `.cursor/skills/*/SKILL.md` | Agent picks relevant ones itself; manual-only ones (`/grill-me`, `/to-milestones`, `/to-workflow`, `/handoff`, `/why`, `/unslop`) run only when you type them |
+| Subagents | `.cursor/agents/*.md` | `/project-researcher`, `/ios-implementer`, `/ios-correctness-reviewer`, `/ios-ui-reviewer`, or by name in a prompt; the two reviewers and the researcher are read-only |
+| MCP | `.cursor/mcp.json` | XcodeBuildMCP tools once its toggle is on; Cursor asks before each tool call unless your run mode allows it |
+
+### A feature from idea to merge-ready
+
+Example prompts, in order. Replace the parts in angle brackets.
+
+1. **Recall what is known.** `/project-memory What do we know about <area>?` On a new app, first run `npm run memory -- init --project "<App>"`, then `/project-researcher Map ownership, business rules, and dependencies for <area>` and ask Agent to record the verified findings.
+2. **Pin down the plan.** `/grill-me I want to <feature>.` Answer its questions one at a time until the decisions are settled.
+3. **Write the contract.** `/to-milestones` turns the agreed plan into `docs/agent-task.md` and runner milestones. Read and edit it; it is what every agent works against.
+4. **Implement with review.** `Follow .cursor/rules/ios-orchestration.mdc for milestone A1.` Agent hands the work to `/ios-implementer`, runs the gate (`npm run harness`), then has `/ios-correctness-reviewer` and `/ios-ui-reviewer` review in parallel, and repairs findings at most twice. For a small change, skip the ceremony: `/tdd <change>`.
+5. **See it running.** `Build and run the app in the Simulator and take a screenshot of <screen>.` Approve the XcodeBuildMCP calls. Use `Run only <Suite>/<test>` for a single test.
+6. **Debug.** `/diagnosing-bugs <symptom>` builds a reproduction first, ranks hypotheses, and ends with a regression test.
+7. **Review the change.** `/code-review against main` reviews it against the task contract and the repository rules separately.
+8. **Keep the knowledge.** `/domain-modeling` for new terms and hard-to-reverse decisions; `/project-memory record <finding>` for other verified facts. Run `npm run memory -- check` before committing.
+9. **Hand off or ship.** `/handoff` writes a summary for a fresh chat. `/file-pr` and `/babysit-pr` handle the pull request when you ask.
+
+### Other ways in
+
+- **Terminal → Run Task** runs the checks, dry runs, memory check, and the live runner from `.vscode/tasks.json`.
+- **Unattended runner:** `npm run orchestrator:live` runs the configured milestones with Cursor SDK agents; see [below](#run-the-deterministic-typescript-orchestrator).
+- **Claude Code:** `/to-workflow` generates a workflow script to run there; see [below](#generate-a-claude-code-ultracode-workflow).
+
+### Troubleshooting
+
+- **A skill, rule, or subagent is missing:** reload the window; Cursor discovers them at startup. Check that the folder name matches the skill's `name`.
+- **XcodeBuildMCP does not start:** run `which xcodebuildmcp`. If Cursor cannot find it, put that absolute path (usually `/opt/homebrew/bin/xcodebuildmcp`) in `command` in `.cursor/mcp.json`.
+- **"Missing required session defaults":** ask Agent to set the XcodeBuildMCP defaults from `tools/ios-harness/config.json`.
+- **`snapshot_ui` or `tap` fails with a SimulatorKit error:** `brew upgrade xcodebuildmcp` to 2.7.0 or later.
+- **The gate refuses to run:** finish `tools/ios-harness/config.json`; `npm run harness:dry-run` shows what it will execute.
 
 ## Everyday skills
 
@@ -65,15 +107,7 @@ npm run memory -- init --project "Your app"
 
 This refuses to overwrite an existing store. Ask the `project-researcher` agent to map the application's architecture, business logic, and dependencies, review the findings, then record them. See [docs/memory.md](docs/memory.md) for freshness, update ownership, and storage limits.
 
-## Use Cursor's own agents
-
-Complete [docs/agent-task.md](docs/agent-task.md) with the real outcome, ownership paths, acceptance criteria, architecture, and verification command. The sample is intentionally incomplete.
-
-For substantial work, ask Cursor to follow `.cursor/rules/ios-orchestration.mdc`. The supplied roles are `project-researcher`, `ios-implementer`, `ios-correctness-reviewer`, and `ios-ui-reviewer`.
-
-The workflow is one writer → serial build/test gate → two independent reviews. Findings go to one repair writer, followed by another gate and both reviews. At most two repairs are allowed. Missing, failed, partial, or cancelled reviews block the milestone. Native agent instructions guide this workflow; the SDK runner below enforces its own scheduling in code.
-
-### Build and run with XcodeBuildMCP
+## Build and run with XcodeBuildMCP
 
 The coordinator builds, runs, tests, debugs, and screenshots the app in the Simulator through [XcodeBuildMCP](https://github.com/getsentry/XcodeBuildMCP), configured in [.cursor/mcp.json](.cursor/mcp.json). Install it once with `brew install xcodebuildmcp`, then reload Cursor and enable the server under Settings → MCP. When merging into an app that already has `.cursor/mcp.json`, add the `XcodeBuildMCP` entry to it.
 
