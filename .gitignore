@@ -1,0 +1,10 @@
+node_modules/
+.orchestrator/
+docs/project-memory/.write-lock/
+docs/project-memory/.memory-*.tmp
+tools/orchestrator/config.json
+tools/ios-harness/config.json
+.env
+.env.*
+!.env.example
+.DS_Store
