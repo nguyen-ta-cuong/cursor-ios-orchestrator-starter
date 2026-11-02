@@ -1,0 +1,7 @@
+{
+  "workspace": "REPLACE_WITH_APP.xcworkspace",
+  "scheme": "REPLACE_WITH_SCHEME",
+  "simulatorUDID": "REPLACE_WITH_SIMULATOR_UDID",
+  "unitTestTargets": ["REPLACE_WITH_UNIT_TEST_TARGET"],
+  "timeoutSeconds": 1800
+}
