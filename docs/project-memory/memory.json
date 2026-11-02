@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "project": "Cursor iOS orchestrator starter",
+  "entries": [
+    {
+      "id": "executed-test-evidence",
+      "topic": "business-logic",
+      "summary": "The iOS gate requires explicit unit test bundles and validates top-level xcresult counts. Zero executed tests, all-skipped results, malformed counts, or missing extraction cannot establish a pass. The harness records raw process and interpreted gate exit codes separately and serializes its own invocations with a repository-local lock.",
+      "recordedAt": "2026-11-02T07:44:03.145Z",
+      "sources": [
+        {
+          "path": "tools/ios-harness/check.ts",
+          "sha256": "16435a9846ad867744e9340134b32be621a4f3d3a0a3fb43558a3528db52c88a"
+        },
+        {
+          "path": "tools/ios-harness/validate-summary.ts",
+          "sha256": "3d010ae55234a9a191b72a17d4d16e4089c73df74532c5a1d7d187e721e1598e"
+        },
+        {
+          "path": "tools/ios-harness/validate-summary.test.ts",
+          "sha256": "5951c584a11de9719faef8adf4fc1fb3502380cb055e38b075982b309afa0cfa"
+        }
+      ]
+    },
+    {
+      "id": "memory-evidence-policy",
+      "topic": "decisions",
+      "summary": "Project memory contains explicit observations and source hashes, not source contents or automatic model claims. Only the coordinator records verified findings. Hash changes mark stale evidence; unchanged hashes do not prove a summary true. The SDK reloads context before every worker and retains aggregated memory warnings in report.json. Context size omissions are explicit. Strict worker report schemas have no memory field: SDK writers put memory proposals in summary as \"Memory:\" sentences, and reviewers keep them out of findings because each finding starts a source repair.",
+      "recordedAt": "2026-11-02T08:03:04.435Z",
+      "sources": [
+        {
+          "path": "tools/orchestrator/memory.ts",
+          "sha256": "8815241c7147ee74b5d4e8f7de1b4a6245751ef8e8d87a5974620ac1ca0d3652"
+        },
+        {
+          "path": "tools/orchestrator/context.ts",
+          "sha256": "503b40906e9576eb903200ef3eaf0357c46a546f5191adcfaac179407367054c"
+        },
+        {
+          "path": "tools/orchestrator/run.ts",
+          "sha256": "41d057cce15f32b1a625d26eb27d02d653dd3e08babea4973e82212270891cb6"
+        },
+        {
+          "path": "docs/memory.md",
+          "sha256": "6f8423a416c72e2a70773c9efe8a4308d807ac1f4f7fa20e3f14520263cd8902"
+        }
+      ]
+    },
+    {
+      "id": "orchestration-ownership",
+      "topic": "codebase",
+      "summary": "engine.ts validates reports and owns milestone scheduling; sdk.ts creates a fresh restricted Cursor agent for each worker; run.ts owns configuration, cancellation, gate processes, and persisted reports. context.ts supplies root instructions, current memory, a local skill catalog, and explicitly selected skill bodies before each worker. The worker timeout and interruption signal cover agent creation and send as well as the run; late agents are disposed and late runs cancelled. An abandoned startup disposes in the background because SDK 1.0.40 disposal awaits the same executor acquisition a stalled send waits on. A second SIGINT or SIGTERM forces process exit.",
+      "recordedAt": "2026-11-02T08:07:40.143Z",
+      "sources": [
+        {
+          "path": "tools/orchestrator/engine.ts",
+          "sha256": "ecb031e49ea0ffcf393f238fbfef65af1f1e8d0105e861bd3f22e0e642673314"
+        },
+        {
+          "path": "tools/orchestrator/sdk.ts",
+          "sha256": "c912efe14dae8f37dca50c2497b12173a957e7793d8610836b09eb60a04ec901"
+        },
+        {
+          "path": "tools/orchestrator/run.ts",
+          "sha256": "41d057cce15f32b1a625d26eb27d02d653dd3e08babea4973e82212270891cb6"
+        },
+        {
+          "path": "tools/orchestrator/context.ts",
+          "sha256": "503b40906e9576eb903200ef3eaf0357c46a546f5191adcfaac179407367054c"
+        }
+      ]
+    },
+    {
+      "id": "bounded-repairs",
+      "topic": "business-logic",
+      "summary": "A milestone has one writer and a serial gate, followed by two independent parallel reviews. An ordinary gate failure or a concrete review finding may receive at most two repairs, each followed by another gate and fresh reviews. Missing, malformed, partial, cancelled, or failed mandatory results block dependent milestones. Infrastructure failure is not a source-repair request. Gate exits 2, 64, 70, 124, 127, 130, 143, null, or a signal are blocked infrastructure or configuration failures; other nonzero exits such as 65 are repairable failures.",
+      "recordedAt": "2026-11-02T08:07:40.146Z",
+      "sources": [
+        {
+          "path": "tools/orchestrator/engine.ts",
+          "sha256": "ecb031e49ea0ffcf393f238fbfef65af1f1e8d0105e861bd3f22e0e642673314"
+        },
+        {
+          "path": "tools/orchestrator/test/engine.test.ts",
+          "sha256": "28d26594b2304b5a223bd77a29d5425e5091b4b0822f7c0c16ae85dcb0e76a6f"
+        }
+      ]
+    },
+    {
+      "id": "runner-skill-defaults",
+      "topic": "decisions",
+      "summary": "config.example.json selects tdd, diagnosing-bugs, and code-review for SDK workers. The runner sends every selected skill body to every role, so each skill states how it applies to runner writers and reviewers instead of per-role selection in the config schema; diagnosing-bugs applies to writers only, and its command-running phases are coordinator-only. code-review maps its Spec axis to review-contract and its Standards axis to review-invariants. Because any reviewer finding forces one of at most two repairs, the runner branches limit findings to demonstrated defects and exclude judgement-call smells and test-style preferences.",
+      "recordedAt": "2026-11-02T08:35:27.430Z",
+      "sources": [
+        {
+          "path": "tools/orchestrator/config.example.json",
+          "sha256": "c8425ca27ff3b2b800b3db808689cef68328b8ab9b91e9fe09d5c52515eb622f"
+        },
+        {
+          "path": ".cursor/skills/code-review/SKILL.md",
+          "sha256": "3e468a9c29b5aba7a44251d7d28f35e85b313b120e06cdbe83bfe747c092b05a"
+        },
+        {
+          "path": ".cursor/skills/tdd/SKILL.md",
+          "sha256": "f09ecc559ddc1fddf46513d6c215196892aec24762d6576dbfcc586ae220e6ba"
+        },
+        {
+          "path": "tools/orchestrator/engine.ts",
+          "sha256": "ecb031e49ea0ffcf393f238fbfef65af1f1e8d0105e861bd3f22e0e642673314"
+        },
+        {
+          "path": "tools/orchestrator/test/skills-lock.test.ts",
+          "sha256": "5a04f57938210984b07e15fefbf2c147a1b2e99895f546cbc8838bf57ba2f1e8"
+        },
+        {
+          "path": ".cursor/skills/diagnosing-bugs/SKILL.md",
+          "sha256": "31ffee6f1097a5ca9402e745a187f846b2de1a74697e0c705a72dfeec6e65207"
+        }
+      ]
+    },
+    {
+      "id": "toolchain-and-sdk",
+      "topic": "dependencies",
+      "summary": "The root npm manifest and lockfile own development tooling: Cursor SDK 1.0.40, Zod 4.6.7 for runtime schema validation, YAML 2.8.3 for skill metadata, tsx 4.23.15, TypeScript 6.0.3, and Node 22 type declarations. Runtime requires Node >=22.13. TypeScript 6 retains lib/tsserver.js for the classic Cursor workspace SDK setting; TypeScript 7.0.2 inspected during migration lacked that file.",
+      "recordedAt": "2026-11-02T08:53:10.640Z",
+      "sources": [
+        {
+          "path": "package.json",
+          "sha256": "6eb17d6c127c59505c97388a7e2476f06842c7245c5027864bef5a200197c81d"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "a47098f73a42a3e2c2a191d78320974be78882b977a3b4af793d6d10bee24132"
+        },
+        {
+          "path": ".vscode/settings.json",
+          "sha256": "971a8b30b05a95f1f45e414b4513c120d339067fefb86519aca9edbb00435377"
+        }
+      ]
+    },
+    {
+      "id": "sdk-tool-vocabulary",
+      "topic": "dependencies",
+      "summary": "Cursor SDK 1.0.40 rejects write as a selected tool name even though ToolName accepts arbitrary strings at compile time. The writer policy uses read, grep, glob, ls, and edit; reviewers use the first four. The fixture regression checks actual options against the installed SDK built-in declaration vocabulary. Recheck tool selection at SDK upgrades; a tool-call event name does not by itself prove it is an accepted selection name.",
+      "recordedAt": "2026-11-02T08:53:10.660Z",
+      "sources": [
+        {
+          "path": "tools/orchestrator/sdk.ts",
+          "sha256": "c912efe14dae8f37dca50c2497b12173a957e7793d8610836b09eb60a04ec901"
+        },
+        {
+          "path": "tools/orchestrator/test/engine.test.ts",
+          "sha256": "28d26594b2304b5a223bd77a29d5425e5091b4b0822f7c0c16ae85dcb0e76a6f"
+        },
+        {
+          "path": "tools/orchestrator/README.md",
+          "sha256": "04188cafcd2f0a92cce9cc503bb9f1eec10c10a29efc3737a2c57470393723b7"
+        }
+      ]
+    },
+    {
+      "id": "claude-code-workflow-generator",
+      "topic": "decisions",
+      "summary": "npm run workflow -- generate turns tools/orchestrator/workflow.json into a Claude Code Workflow script (meta literal, CONFIG JSON, then workflow-runtime.js) for Opus 5.5 ultracode sessions, where agents have full tools and run their own builds, tests, and renders. The runtime keeps the engine.ts milestone contract with configurable lenses: one writer; an independent gate agent that only runs checks; at least two lens reviewers in parallel, skipped when the gate fails; repairs must list each finding once as fixed or rejected with evidence, and rejected findings return to reviewers; every repair is gated and reviewed again, at most two; a missing review, non-done writer, blocked gate, or findings left after the last repair halts the milestone and all later ones with a log of what did not run. Minor findings are repaired in round 0 and deferred afterward by default. Generation rejects undefined lenses or variables and REPLACE_WITH_ placeholders. Unset agent roles inherit the session model and effort; Workflow effort accepts low through max only.",
+      "recordedAt": "2026-11-02T08:53:10.674Z",
+      "sources": [
+        {
+          "path": "tools/orchestrator/workflow.ts",
+          "sha256": "0bdc5fa801c29529c5479adc49b7a76eb2473070aab20d84a73433bb0e341c90"
+        },
+        {
+          "path": "tools/orchestrator/workflow-runtime.js",
+          "sha256": "619e0add21b177442423132cc1ce56b65dff4405cfbe127653c55ef106e83550"
+        },
+        {
+          "path": "tools/orchestrator/workflow-cli.ts",
+          "sha256": "8b0ef83fa80c2c4c326efc225a954b5fc1c8813e6aea75d602550cde3c9c89cf"
+        },
+        {
+          "path": "tools/orchestrator/test/workflow.test.ts",
+          "sha256": "beeba17229cc95ad2ca4d76e42ac67080f46e15ca83545c5fa3b8cddad2ed5fd"
+        },
+        {
+          "path": ".cursor/skills/to-workflow/SKILL.md",
+          "sha256": "6f9ddf5a289bd64249d2591f75e7f03f51511a1bd0345a74faf0b9f24c13e7e6"
+        }
+      ]
+    },
+    {
+      "id": "starter-scope",
+      "topic": "codebase",
+      "summary": "This repository is development tooling for an existing iOS application; it does not contain the application source or establish its domain rules. The Node/TypeScript tools stay out of shipped app targets. Copying the starter into an app requires initializing its own knowledge store and completing task and gate configuration.",
+      "recordedAt": "2026-11-02T09:03:37.593Z",
+      "sources": [
+        {
+          "path": "README.md",
+          "sha256": "cf31ded07c70a407a6bc4c0c8e289ccd033a077604fb0745a5fb64802adfa1c1"
+        },
+        {
+          "path": "docs/agent-task.md",
+          "sha256": "99bb3cd7fb5f354c5ccfa9755a0b8ae8a259c61254bbd0f412135f548adeb276"
+        },
+        {
+          "path": "tsconfig.json",
+          "sha256": "07d2d3fdee601f733d6322890e26f65731a4358848895ac15d83f26e780b3075"
+        }
+      ]
+    },
+    {
+      "id": "skill-sources-and-boundaries",
+      "topic": "dependencies",
+      "summary": "Repository-local Cursor skills include all nine tstack skills, pstack unslop and why with references, Matt Pocock grill-me with its grilling dependency, seven skills distilled from mattpocock/skills at the same pinned commit (tdd, diagnosing-bugs, code-review, to-milestones, domain-modeling, writing-for-agents, handoff), the official XcodeBuildMCP 2.3.2 MCP skill (xcodebuildmcp, byte-identical), and local project-memory and to-workflow. skills-lock.json pins upstream commits and installed hashes; distilled entries record derivedFrom upstream blobs and their adaptations, and npm test fails when installed bytes, modes, file inventories, or dependencies drift from the manifest. Git/PR workflows, full why investigations, conversational grilling, to-milestones, domain-modeling, and handoff need an interactive coordinator; selected skill text never expands SDK worker permissions.",
+      "recordedAt": "2026-11-02T09:03:37.600Z",
+      "sources": [
+        {
+          "path": "skills-lock.json",
+          "sha256": "88ecd6d49e4938e0e6a7aa93a6e2a42b72dcd8fa9d05190d55c5311ddb380e9e"
+        },
+        {
+          "path": "docs/skills.md",
+          "sha256": "b7233d019c49d7c67733c7a702a70f20402791c5a8e6fdf3f6c6c05c20d1d1c6"
+        },
+        {
+          "path": "tools/orchestrator/sdk.ts",
+          "sha256": "c912efe14dae8f37dca50c2497b12173a957e7793d8610836b09eb60a04ec901"
+        },
+        {
+          "path": "tools/orchestrator/test/skills-lock.test.ts",
+          "sha256": "5a04f57938210984b07e15fefbf2c147a1b2e99895f546cbc8838bf57ba2f1e8"
+        }
+      ]
+    },
+    {
+      "id": "xcodebuildmcp-interactive-build-run",
+      "topic": "decisions",
+      "summary": "The interactive Cursor coordinator builds, runs, tests, debugs, and screenshots the app through XcodeBuildMCP (.cursor/mcp.json, Homebrew xcodebuildmcp mcp); the unattended runner keeps the deterministic xcodebuild gate in tools/ios-harness as acceptance evidence. .xcodebuildmcp/config.yaml enables simulator, ui-automation, logging, and debugging workflows, disables Sentry telemetry (also via env in mcp.json, because the config is only read from the server cwd), and holds no machine-specific defaults: the coordinator sets project, scheme, and simulator per session from tools/ios-harness/config.json with persist off, so interactive runs and the gate target the same app. Interactive runs wait while .orchestrator/build-lock exists because both use the same simulator. Only the coordinator uses XcodeBuildMCP; SDK workers have no MCP access.",
+      "recordedAt": "2026-11-02T09:03:37.601Z",
+      "sources": [
+        {
+          "path": ".cursor/mcp.json",
+          "sha256": "2be718e2af001e7ec76a34bc8ae3569b6ae6814992c1806ffd25ff9ac15a4120"
+        },
+        {
+          "path": ".xcodebuildmcp/config.yaml",
+          "sha256": "f573667c32a174cc72048cd2f9a0d2dbf7ced82ef75dba4d7ae5111c89cfe0a7"
+        },
+        {
+          "path": ".cursor/rules/xcode-build-run.mdc",
+          "sha256": "446bcc99d72c0ae9d03e0c0e03739f293cbb7168a77080fab893da34f0efb0d1"
+        },
+        {
+          "path": "tools/ios-harness/check.ts",
+          "sha256": "16435a9846ad867744e9340134b32be621a4f3d3a0a3fb43558a3528db52c88a"
+        },
+        {
+          "path": "README.md",
+          "sha256": "cf31ded07c70a407a6bc4c0c8e289ccd033a077604fb0745a5fb64802adfa1c1"
+        }
+      ]
+    },
+    {
+      "id": "xcodebuildmcp-version-constraints",
+      "topic": "dependencies",
+      "summary": "Verified 2026-11-02 with XcodeBuildMCP 2.3.2 and Xcode 27.0 on a throwaway xcodegen SwiftUI app: build_run_sim, screenshot, and test_sim with extraArgs -only-testing succeeded. With 2.3.2 on Xcode 27, every AXe-based UI automation tool (snapshot_ui, tap, swipe, type_text, gestures) fails because bundled AXe 1.5.2 loads SimulatorKit.framework from Developer/Library/PrivateFrameworks, while Xcode 27 ships it in Contents/SharedFrameworks; upstream 2.7.0 added Xcode 27 simulator UI automation. In session-defaults mode, stop_app_sim and log tools expose no parameters, so bundleId must be set with session_set_defaults. test_sim extraArgs are appended to xcodebuild.",
+      "recordedAt": "2026-11-02T09:03:37.606Z",
+      "sources": [
+        {
+          "path": ".cursor/rules/xcode-build-run.mdc",
+          "sha256": "446bcc99d72c0ae9d03e0c0e03739f293cbb7168a77080fab893da34f0efb0d1"
+        },
+        {
+          "path": ".cursor/skills/xcodebuildmcp/SKILL.md",
+          "sha256": "5ac4f6d8b746c2a0987bc1e5c09af79a9eab492bbba84795bbace458a1f86920"
+        },
+        {
+          "path": "skills-lock.json",
+          "sha256": "88ecd6d49e4938e0e6a7aa93a6e2a42b72dcd8fa9d05190d55c5311ddb380e9e"
+        },
+        {
+          "path": "README.md",
+          "sha256": "cf31ded07c70a407a6bc4c0c8e289ccd033a077604fb0745a5fb64802adfa1c1"
+        }
+      ]
+    }
+  ]
+}

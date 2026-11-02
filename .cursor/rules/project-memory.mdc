@@ -1,0 +1,8 @@
+---
+description: Load durable knowledge before investigating or changing project behavior and dependencies.
+alwaysApply: true
+---
+
+For nontrivial work, follow the memory workflow in AGENTS.md and start at docs/project-memory/index.md. Read relevant recorded facts and confirm their evidence against current source. A source hash change makes a fact stale; an unchanged hash does not prove the summary correct.
+
+Use project-researcher for broad read-only exploration of ownership, business rules, and dependencies. Give delegated workers the relevant memory entries and evidence paths, along with their explicit scope. The coordinator records verified durable findings using the project-memory skill after the gate and reviews; workers propose memory corrections in their reports.
