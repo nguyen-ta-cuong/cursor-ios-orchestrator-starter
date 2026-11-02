@@ -1,0 +1,87 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "TypeScript: typecheck",
+      "type": "process",
+      "problemMatcher": "$tsc",
+      "group": "build",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Orchestrator: fixture tests",
+      "type": "process",
+      "problemMatcher": [],
+      "group": "test",
+      "command": "npm",
+      "args": [
+        "run",
+        "test"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "iOS orchestrator: dry run",
+      "type": "process",
+      "problemMatcher": [],
+      "command": "npm",
+      "args": [
+        "run",
+        "orchestrator:dry-run"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "iOS harness: dry run",
+      "type": "process",
+      "problemMatcher": [],
+      "command": "npm",
+      "args": [
+        "run",
+        "harness:dry-run"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Project memory: check",
+      "type": "process",
+      "problemMatcher": [],
+      "command": "npm",
+      "args": [
+        "run",
+        "memory",
+        "--",
+        "check"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "iOS orchestrator: live run",
+      "type": "process",
+      "problemMatcher": [],
+      "command": "npm",
+      "args": [
+        "run",
+        "orchestrator:live"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}

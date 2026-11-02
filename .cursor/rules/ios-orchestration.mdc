@@ -1,0 +1,19 @@
+---
+description: Coordination rules for explicitly requested multi-agent iOS work.
+alwaysApply: true
+---
+
+Apply this workflow when the user asks for orchestration or multiple agents. A simple edit does not require a multi-agent run.
+
+1. Read applicable repository instructions, relevant project memory and its evidence, and docs/agent-task.md. Resolve the actual repository, workspace or project, scheme, and acceptance criteria before coding. Use grill-me in the interactive coordinator when product decisions need clarification, then to-milestones to write the task contract and milestone configuration.
+2. Assign one small milestone to ios-implementer. Only one agent writes to this checkout at a time.
+3. Once the writer finishes, run the project's approved build/test gate serially. For this starter, use bash tools/ios-harness/check.sh after its configuration is completed. Use XcodeBuildMCP, as bound in xcode-build-run.mdc, to run the app, capture screenshots for visual acceptance, and debug between gates, never during one.
+4. Freeze edits while ios-correctness-reviewer and ios-ui-reviewer review in parallel. Give each the complete task, paths, implementation report, and gate evidence; they start without your conversation history.
+5. Keep every result paired with its reviewer name. A missing, failed, cancelled, stopped, partial, or malformed mandatory result blocks the milestone.
+6. Send real findings to one repair writer, who follows diagnosing-bugs for gate failures. Run the gate and both reviews again after every repair, including the final allowed repair. Allow at most two repair rounds.
+7. Continue to the next milestone only when the gate passes and both mandatory reviews accept the current code. Report remaining findings when the repair limit is reached.
+8. Do not commit, push, merge, release, change credentials, weaken tests, or edit acceptance criteria as part of this workflow.
+9. Use isolated worktrees and explicit integration ownership before allowing concurrent writers. Unique DerivedData paths do not themselves prevent simulator conflicts.
+10. After acceptance, the coordinator records durable codebase, business-logic, and dependency findings through the project-memory workflow, using domain-modeling for terms and hard-to-reverse decisions. Treat worker reports as proposals to verify, not facts to persist automatically.
+
+These are agent instructions. The deterministic runner in tools/orchestrator owns scheduling when you invoke it; do not run an additional native editing agent beside that runner.

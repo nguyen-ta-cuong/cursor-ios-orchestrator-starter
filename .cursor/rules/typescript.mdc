@@ -1,0 +1,9 @@
+---
+description: TypeScript conventions for the orchestrator and local verification tools.
+globs: tools/**/*.ts
+alwaysApply: false
+---
+
+Use strict TypeScript and explicit types at SDK, process, filesystem, and JSON boundaries. Treat external JSON as unknown until validated. Imports of local modules use .ts; tsx runs source, and tsc checks without emitting JavaScript. Keep the Node toolchain out of iOS application targets.
+
+Preserve gate exit classification, exact structured reports, and bounded repairs. Use fixture tests for scheduling or validation changes; run actual Xcode gates only against an authorized, configured app task.

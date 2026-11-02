@@ -1,0 +1,14 @@
+# Add these entries to the existing repository .gitignore.
+.orchestrator/
+node_modules/
+docs/project-memory/.write-lock/
+docs/project-memory/.memory-*.tmp
+
+# Optional: simulator UDIDs and personal model choices may stay machine-local.
+tools/ios-harness/config.json
+tools/orchestrator/config.json
+
+# Keep secrets local; durable docs/project-memory/memory.json belongs in Git.
+.env
+.env.*
+!.env.example
